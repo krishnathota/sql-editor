@@ -1,21 +1,42 @@
-import { customElement, html, LitElement, property } from 'lit-element';
-import './helloView';
+import { customElement, html, LitElement, css } from 'lit-element';
+import { editor } from 'monaco-editor';
 
-@customElement('hello-world')
-class HelloWorld extends LitElement {
-  @property({ type: Number })
-  private value = 0;
-
-  public render() {
-    return html`
-      <hello-view
-        @increment="${this.handleIncrement}"
-        value="${this.value.toString()}"
-      ></hello-view>
+@customElement('sql-editor')
+class SqlEditor extends LitElement {
+  // @property({ type: Number })
+  static get styles() {
+    return css`
+      :host {
+        display: flex;
+        flex: 1;
+        height: 100%;
+      }
+      .editor-container {
+        flex: 1;
+      }
     `;
   }
 
-  private handleIncrement() {
-    this.value += 1;
+  render() {
+    return html`
+      <div id="sql-editor-container" class="editor-container" style="flex: 1;"></div>
+    `;
+  }
+
+  createRenderRoot() {
+    return this;
+  }
+
+  async connectedCallback() {
+    super.connectedCallback();
+    await this.updateComplete;
+    editor.create((<any>this).querySelector('#sql-editor-container'),{
+      value: 'SELECT * FROM Table',
+      language: 'sql'
+    });
+
+    console.log(editor);
+
+    debugger;
   }
 }
